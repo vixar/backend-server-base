@@ -25,6 +25,7 @@ exports.verificaToken = function(req, res, next) {
         }
 
         req.user = decoded.user;
+        req.hospital = decoded.hospital;
 
         next();
         // res.status(201).json({
