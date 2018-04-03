@@ -2,26 +2,29 @@ var mongoose = require('mongoose');
 
 var Schema = mongoose.Schema;
 
-var categoriaValida = {
+// var tipoValido = {
+//     values: ['UNIDAD-PAQUETE', 'CHILLER', 'SPLIT', 'SPLIT-DUCTEABLE'],
+//     message: '{VALUE} no es una categoria permitida, verifique si está escrito en mayúsculas'
+// }
+
+var categoriaEquipo = {
     values: ['SECADOR', 'EVAPORADOR', 'CONDENSADOR', 'COMPRESOR'],
     message: '{VALUE} no es una categoria permitida, verifique si está escrito en mayúsculas'
 }
-var tipoValido = {
-    values: ['UNIDAD-PAQUETE', 'CHILLER', 'SPLIT', 'SPLIT-DUCTEABLE'],
-    message: '{VALUE} no es una categoria permitida, verifique si está escrito en mayúsculas'
-}
+
 var areaValida = {
     values: ['CLIMATIZACIÓN', 'ELECTROMECÁNICA', 'ELÉCTRICA', 'MECÁNICA', 'NEUMÁTICA'],
     message: '{VALUE} no es una categoria permitida, verifique si está escrito en mayúsculas'
 }
 
 var equipoSchema = new Schema({
+    // tipo: ({ type: String, required: true, default: 'SPLIT', enum: tipoValido }),
     marca: ({ type: String, required: [true, 'La marca es un campo necesario'] }),
     modelo: ({ type: String, required: [true, 'El modelo es necesario'] }),
-    categoria: ({ type: String, required: true, default: 'EVAPORADOR', enum: categoriaValida }),
-    tipo: ({ type: String, required: true, default: 'SPLIT', enum: tipoValido }),
+    categoria: ({ type: String, required: true, default: 'EVAPORADOR', enum: categoriaEquipo }),
     area: ({ type: String, required: true, default: 'CLIMATIZACIÓN', enum: areaValida }),
     descripcion: { type: String, required: false },
+    refUbicacion: { type: String, required: false },
     img: { type: String, required: false },
 
     localidad: ({ type: Schema.Types.ObjectId, ref: 'Localidad', required: [true, 'Es necesario asigarlo a una localidad'] }),

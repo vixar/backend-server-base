@@ -17,14 +17,14 @@ var Equipo = require('../Models/equipo');
 
 app.get('/', (req, res, next) => {
 
-    Localidad.find({})
-        .populate('equipo', 'categoria marca modelo')
+    Equipo.find({})
+        .populate('localidad', 'nombre')
         .exec(
-            (err, localidades) => {
+            (err, equipos) => {
                 if (err) {
                     return res.status(500).json({
                         ok: false,
-                        mensaje: 'Error cargando localidad',
+                        mensaje: 'Error cargando equipos',
                         errors: err
                     });
 
@@ -32,7 +32,7 @@ app.get('/', (req, res, next) => {
 
                 res.status(200).json({
                     ok: true,
-                    localidades: localidades
+                    equipos: equipos
                 });
 
 
@@ -53,32 +53,31 @@ app.post('/', mdAuth.verificaToken, (req, res) => {
 
     /* para crear un usuario o crear un objeto del modelo que creamos, entonces usamos
      las propiedades del modelo */
-    var localidad = new Localidad({
-        nombre: body.nombre,
-        direccion: body.direccion,
-        contacto: body.contacto,
-        telefono: body.telefono,
-        telefonoContacto: body.telefono_contacto,
-        equipo: body.equipo,
+    var equipo = new Equipo({
+        marca: body.marca,
+        modelo: body.modelo,
+        // categoria: body.categoria,
+        // descripcion: body.descripcion,
+        // refUbicacion: body.ubicacion,
+        localidad: body.localidad,
         usuario: req.user._id
     });
 
     /* para guardarlo en la base de datos*/
 
-    localidad.save((err, localidadSaved) => {
+    equipo.save((err, equipoSaved) => {
         if (err) {
             return res.status(400).json({
                 ok: false,
-                mensaje: 'Error creando localidad',
-                errors: 'Pista: el nombre debe de ser único',
-                err
+                mensaje: 'Error creando equipo',
+                errors: err
             });
 
         }
 
         res.status(201).json({
             ok: true,
-            localidad: localidadSaved,
+            equipo: equipoSaved,
             user: req.user.nombre
         });
 
@@ -103,40 +102,40 @@ app.put('/:id', mdAuth.verificaToken, (req, res) => {
     var body = req.body;
 
     // verificar si un usuario tiene este id
-    Localidad.findById(id, (err, localidad) => {
+    Equipo.findById(id, (err, equipo) => {
 
         if (err) {
             return res.status(500).json({
                 ok: false,
-                mensaje: 'Error al buscar localidad',
+                mensaje: 'Error al buscar equipo',
                 errors: err
             });
 
         }
 
-        if (!localidad) {
+        if (!equipo) {
             return res.status(400).json({
                 ok: false,
-                mensaje: 'La localidad con el id ' + id + 'no existe',
-                errors: { message: 'No existe una localidad con ese ID' }
+                mensaje: 'El equipo con el id ' + id + 'no existe',
+                errors: { message: 'No existe un equipo con ese ID' }
             });
         }
 
-        localidad.nombre = body.nombre;
-        localidad.direccion = body.direccion;
-        localidad.contacto = body.contacto;
-        localidad.telefono = body.telefono;
-        localidad.telefonoContacto = body.telefono_contacto;
-        localidad.equipo = body.equipo;
-        localidad.usuario = req.user._id;
+        equipo.marca = body.marca;
+        equipo.modelo = body.modelo;
+        equipo.localidad = body.localidad;
+        // localidad.telefono = body.telefono;
+        // localidad.telefonoContacto = body.telefono_contacto;
+        // localidad.equipo = body.equipo;
+        // localidad.usuario = req.user._id;
 
 
-        localidad.save((err, localidadSaved) => {
+        equipo.save((err, equipoSaved) => {
 
             if (err) {
                 return res.status(500).json({
                     ok: false,
-                    mensaje: 'Error al actualizar localidad',
+                    mensaje: 'Error al actualizar el equipo',
                     errors: err
                 });
 
@@ -144,7 +143,7 @@ app.put('/:id', mdAuth.verificaToken, (req, res) => {
 
             res.status(200).json({
                 ok: true,
-                localidad: localidadSaved,
+                equipo: equipoSaved,
                 user: req.user.nombre
             });
 
@@ -164,29 +163,29 @@ app.delete('/:id', mdAuth.verificaToken, (req, res) => {
     var id = req.params.id;
     var nombre = req.user.nombre;
 
-    Localidad.findByIdAndRemove(id, (err, localidadBorrado) => {
+    Equipo.findByIdAndRemove(id, (err, equipoBorrado) => {
         if (err) {
             return res.status(500).json({
                 ok: false,
-                mensaje: 'Error al borrar localidad con el id =>' + id,
+                mensaje: 'Error al borrar equipo con el id =>' + id,
                 errors: err
             });
 
         }
 
-        if (!localidadBorrado) {
+        if (!equipoBorrado) {
             return res.status(400).json({
                 ok: false,
-                mensaje: 'No existe una localidad con ese id',
-                errors: { message: 'No existe una localidad con ese id' }
+                mensaje: 'No existe un equipo con ese id',
+                errors: { message: 'No existe un equipo con ese id' }
             });
 
         }
 
         res.status(200).json({
             ok: true,
-            localidad: localidadBorrado,
-            message: 'Localidad: ' + id + ': ' + localidadBorrado.nombre + ' => ha sido eliminado de la base de datos',
+            equipo: equipoBorrado,
+            message: 'Equipo: ' + id + ': ' + equipoBorrado.nombre + ' => ha sido eliminado de la base de datos',
             usuario: req.user.nombre
         });
     })

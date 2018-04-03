@@ -42,6 +42,7 @@ var clienteRoutes = require('./Routes/cliente');
 var hospitalRoutes = require('./Routes/hospital');
 var medicoRoutes = require('./Routes/medico');
 var localidadRoutes = require('./Routes/localidad');
+var equipoRoutes = require('./Routes/equipo');
 
 
 
@@ -53,6 +54,7 @@ app.use('/hospital', hospitalRoutes);
 app.use('/cliente', clienteRoutes);
 app.use('/medico', medicoRoutes);
 app.use('/localidad', localidadRoutes);
+app.use('/equipo', equipoRoutes);
 app.use('/', appRoutes);
 
 
