@@ -5,8 +5,8 @@ var app = express();
 
 var mdAuth = require('../middlewares/auth');
 
-var Cliente = require('../Models/cliente');
 var Localidad = require('../Models/localidad');
+// var Equipo = require('../Models/equipo');
 // var User = require('../Models/user');
 
 
@@ -17,14 +17,14 @@ var Localidad = require('../Models/localidad');
 
 app.get('/', (req, res, next) => {
 
-    Cliente.find({})
-        .populate('localidad')
+    Localidad.find({})
+        // .populate('usuario', 'nombre email')
         .exec(
-            (err, clientes) => {
+            (err, localidades) => {
                 if (err) {
                     return res.status(500).json({
                         ok: false,
-                        mensaje: 'Error cargando clientes',
+                        mensaje: 'Error cargando localidad',
                         errors: err
                     });
 
@@ -32,7 +32,7 @@ app.get('/', (req, res, next) => {
 
                 res.status(200).json({
                     ok: true,
-                    clientes: clientes
+                    localidades: localidades
                 });
 
 
@@ -53,30 +53,31 @@ app.post('/', mdAuth.verificaToken, (req, res) => {
 
     /* para crear un usuario o crear un objeto del modelo que creamos, entonces usamos
      las propiedades del modelo */
-    var cliente = new Cliente({
+    var localidad = new Localidad({
         nombre: body.nombre,
         direccion: body.direccion,
+        contacto: body.contacto,
         telefono: body.telefono,
-        rnc: body.rnc,
-        localidad: body.localidad,
+        telefonoContacto: body.telefono_contacto,
         usuario: req.user._id
     });
 
     /* para guardarlo en la base de datos*/
 
-    cliente.save((err, clienteSaved) => {
+    localidad.save((err, localidadSaved) => {
         if (err) {
             return res.status(400).json({
                 ok: false,
-                mensaje: 'Error creando cliente',
-                errors: err
+                mensaje: 'Error creando localidad',
+                errors: 'Pista: el nombre debe de ser único',
+                err
             });
 
         }
 
         res.status(201).json({
             ok: true,
-            cliente: clienteSaved,
+            localidad: localidadSaved,
             user: req.user.nombre
         });
 
@@ -101,41 +102,39 @@ app.put('/:id', mdAuth.verificaToken, (req, res) => {
     var body = req.body;
 
     // verificar si un usuario tiene este id
-    Cliente.findById(id, (err, cliente) => {
-
-
+    Localidad.findById(id, (err, localidad) => {
 
         if (err) {
             return res.status(500).json({
                 ok: false,
-                mensaje: 'Error al buscar cliente',
+                mensaje: 'Error al buscar localidad',
                 errors: err
             });
 
         }
 
-        if (!cliente) {
+        if (!localidad) {
             return res.status(400).json({
                 ok: false,
-                mensaje: 'El cliente con el id ' + id + 'no existe',
-                errors: { message: 'No existe un cliente con ese ID' }
+                mensaje: 'La localidad con el id ' + id + 'no existe',
+                errors: { message: 'No existe una localidad con ese ID' }
             });
         }
 
-        cliente.nombre = body.nombre;
-        cliente.direccion = body.direccion;
-        cliente.telefono = body.telefono;
-        cliente.rnc = body.rnc;
-        cliente.localidad = body.localidad;
-        cliente.usuario = req.user._id;
+        localidad.nombre = body.nombre;
+        localidad.direccion = body.direccion;
+        localidad.contacto = body.contacto;
+        localidad.telefono = body.telefono;
+        localidad.telefonoContacto = body.telefono_contacto;
+        localidad.usuario = req.user._id;
 
 
-        cliente.save((err, clienteSaved) => {
+        localidad.save((err, localidadSaved) => {
 
             if (err) {
                 return res.status(500).json({
                     ok: false,
-                    mensaje: 'Error al actualizar cliente',
+                    mensaje: 'Error al actualizar localidad',
                     errors: err
                 });
 
@@ -143,7 +142,7 @@ app.put('/:id', mdAuth.verificaToken, (req, res) => {
 
             res.status(200).json({
                 ok: true,
-                cliente: clienteSaved,
+                localidad: localidadSaved,
                 user: req.user.nombre
             });
 
@@ -163,29 +162,29 @@ app.delete('/:id', mdAuth.verificaToken, (req, res) => {
     var id = req.params.id;
     var nombre = req.user.nombre;
 
-    Cliente.findByIdAndRemove(id, (err, clienteBorrado) => {
+    Localidad.findByIdAndRemove(id, (err, localidadBorrado) => {
         if (err) {
             return res.status(500).json({
                 ok: false,
-                mensaje: 'Error al borrar cliente con el id =>' + id,
+                mensaje: 'Error al borrar localidad con el id =>' + id,
                 errors: err
             });
 
         }
 
-        if (!clienteBorrado) {
+        if (!localidadBorrado) {
             return res.status(400).json({
                 ok: false,
-                mensaje: 'No existe un cliente con ese id',
-                errors: { message: 'No existe un cliente con ese id' }
+                mensaje: 'No existe una localidad con ese id',
+                errors: { message: 'No existe una localidad con ese id' }
             });
 
         }
 
         res.status(200).json({
             ok: true,
-            cliente: clienteBorrado,
-            message: 'Cliente: ' + id + ': ' + clienteBorrado.nombre + ' => ha sido eliminado de la base de datos',
+            localidad: localidadBorrado,
+            message: 'Localidad: ' + id + ': ' + localidadBorrado.nombre + ' => ha sido eliminado de la base de datos',
             usuario: req.user.nombre
         });
     })

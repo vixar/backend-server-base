@@ -11,17 +11,19 @@ var tipoLocalidad = {
 var clienteSchema = new Schema({
     nombre: ({ type: String, unique: true, required: [true, 'El nombre es necesario'] }),
 
-    direccion: ({ type: String, required: [true, 'El La dirección es necesaria'] }),
+    direccion: ({ type: String }),
 
-    telefono: ({ type: Number, required: [true, 'Al menos un número es necesario'] }),
+    telefono: ({ type: Number, unique: true }),
 
-    rnc: ({ type: String, required: false, unique: true }),
+    website: ({ type: String }),
+
+    rnc: ({ type: Number, required: true, unique: true }),
 
     tipo: { type: String, required: true, default: 'TIENDA COMERCIAL', enum: tipoLocalidad },
 
     img: { type: String, required: false },
 
-    localidad: ({ type: Schema.Types.ObjectId, ref: 'Localidad' }),
+    localidad: [({ type: Schema.Types.ObjectId, ref: 'Localidad' })],
     usuario: { type: Schema.Types.ObjectId, ref: 'Usuario' }
 }, { collection: 'clientes' });
 
